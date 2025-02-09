@@ -1,0 +1,23 @@
+torchrun finetune.py \
+    --model_name_or_path <path to Qwen2.5-Math-7B> \
+    --train_data_path "HuggingFaceH4/prm800k-trl-dedup" \
+    --fix_llm True \
+    --num_train_epochs 3 \
+    --learning_rate 1e-4 \
+    --run_name <run_name> \
+    --output_dir <output_dir> \
+    --bf16 True \
+    --per_device_train_batch_size 16 \
+    --per_device_eval_batch_size 1 \
+    --gradient_accumulation_steps 1 \
+    --evaluation_strategy "no" \
+    --save_strategy "steps" \
+    --save_steps 500 \
+    --save_total_limit 3 \
+    --weight_decay 0.1 \
+    --adam_beta2 0.95 \
+    --warmup_ratio 0.0 \
+    --logging_steps 1 \
+    --report_to "wandb" \
+    --gradient_checkpointing True \
+    --deepspeed ds_config_zero2.json

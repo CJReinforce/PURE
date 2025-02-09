@@ -1,11 +1,15 @@
 set -x 
 
+LLM_PATH=<path to qwen2.5-math-7b>
+PRM_PATH=<path to PRM>
+SAVE_PATH=<path to save model>
+
 export NCCL_DEBUG=WARN
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 export TOKENIZERS_PARALLELISM=true
 timestep=$(date "+%m%d%H%M%S")
 
-python -m openrlhf.cli.train_reft_prm_ray \
+python -m openrlhf.cli.train_pure_ray \
    --ref_num_nodes 1 \
    --ref_num_gpus_per_node 4 \
    --reward_num_nodes 1 \
@@ -24,12 +28,12 @@ python -m openrlhf.cli.train_reft_prm_ray \
    --rollout_batch_size 64 \
    --max_epochs 1 \
    --micro_train_batch_size 2 \
-   --actor_learning_rate 3e-7 \
+   --actor_learning_rate 5e-7 \
    --init_kl_coef 0.001 \
-   --pretrain /mnt/petrelfs/chengjie/Qwen2.5-Math-7B \
-   --reward_pretrain /mnt/petrelfs/chengjie/ceph5/qwen25-math-7b-PRM800k-bs128-lr1e-6-epoch-1-stage2 \
-   --save_path /mnt/petrelfs/chengjie/ceph5/openrlhf/ray_debug_$timestep \
-   --ckpt_path /mnt/petrelfs/chengjie/ceph5/openrlhf/ray_debug_$timestep/checkpoints \
+   --pretrain $LLM_PATH \
+   --reward_pretrain $PRM_PATH \
+   --save_path $SAVE_PATH \
+   --ckpt_path $SAVE_PATH/checkpoints \
    --save_steps 10 \
    --max_ckpt_num 15 \
    --logging_steps 1 \
@@ -49,9 +53,3 @@ python -m openrlhf.cli.train_reft_prm_ray \
    --disable_ds_ckpt \
    --save_hf_ckpt \
    --use_wandb True
-
-# --runtime-env-json='{"setup_commands": ["pip install openrlhf[vllm]"]}' [Install deps]
-# --ref_reward_offload [Offload to CPU]
-# --remote_rm_url http://localhost:5000/get_reward
-
-# --vllm_sync_backend nccl (Only for multi-nodes with vLLM 0.6.4+ or vLLM 0.4.2)

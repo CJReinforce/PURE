@@ -1,0 +1,22 @@
+accelerate
+bitsandbytes
+datasets
+deepspeed==0.15.0
+einops
+flash-attn==2.7.0.post2
+jsonlines
+loralib
+optimum
+packaging
+peft @ git+https://github.com/huggingface/peft@f973b28ffa16cf025af176f6e44ec96f275c8fd6
+ray==2.12.0
+tensorboard
+torch
+torchmetrics
+torchvision
+tqdm
+transformers==4.46.3
+transformers-stream-generator
+trl==0.13.0
+vllm==0.6.4.post1
+wandb

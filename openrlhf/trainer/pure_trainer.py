@@ -2,7 +2,7 @@ import os
 import os.path
 import shutil
 from abc import ABC
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, Optional
 
 import torch
 import torch.nn as nn
@@ -10,9 +10,7 @@ from torch.optim import Optimizer
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
-from openrlhf.models import Actor, GPTLMLoss, PolicyLoss, ValueLoss
-from openrlhf.models.utils import masked_mean
-from openrlhf.utils import token_log_prob_to_step_log_prob
+from openrlhf.models import Actor, GPTLMLoss, PolicyLoss
 from openrlhf.utils.distributed_sampler import DistributedSampler
 
 from .ppo_utils import (
@@ -24,7 +22,7 @@ from .ppo_utils import (
 )
 
 
-class ReFTPRMTrainer(ABC):
+class PURETrainer(ABC):
     def __init__(
         self,
         strategy,

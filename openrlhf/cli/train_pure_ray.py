@@ -2,14 +2,13 @@ import argparse
 from datetime import datetime
 
 import ray
-from ray.air import session
 from ray.util.placement_group import placement_group
 
 from openrlhf.trainer.ray import (
-    ActorModelReFTPRMRayActor,
+    ActorModelPURERayActor,
     ProcessRewardModelRayActor,
+    PURERayActorGroup,
     ReferenceModelRayActor,
-    ReFTPRMRayActorGroup,
     create_vllm_engines,
 )
 from openrlhf.utils import get_strategy
@@ -28,6 +27,11 @@ def _validate_args(args):
         assert (
             actor_world_size % args.vllm_num_engines == 0
         ), f"actor_world_size must be divisible by vllm_num_engines, got {actor_world_size} and {args.vllm_num_engines}"
+    
+    assert args.micro_rollout_batch_size % args.n_samples_per_prompt == 0, "Not supported yet"
+    assert args.gamma == 1
+    assert not args.packing_samples
+    assert args.advantage_estimator == "rloo"
 
 
 def train(args):
@@ -48,15 +52,15 @@ def train(args):
     pg = placement_group(bundles, strategy="STRICT_SPREAD")
     ray.get(pg.ready())
 
-    actor_model = ReFTPRMRayActorGroup(
+    actor_model = PURERayActorGroup(
         args.actor_num_nodes,
         args.actor_num_gpus_per_node,
-        ActorModelReFTPRMRayActor,
+        ActorModelPURERayActor,
         pg=pg,
         num_gpus_per_actor=0.6,
     )
 
-    ref_model = ReFTPRMRayActorGroup(
+    ref_model = PURERayActorGroup(
         args.ref_num_nodes,
         args.ref_num_gpus_per_node,
         ReferenceModelRayActor,
@@ -64,7 +68,7 @@ def train(args):
         num_gpus_per_actor=0.3,
     )
 
-    reward_model = ReFTPRMRayActorGroup(
+    reward_model = PURERayActorGroup(
         args.reward_num_nodes,
         args.reward_num_gpus_per_node,
         ProcessRewardModelRayActor,

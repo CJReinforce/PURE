@@ -1,4 +1,6 @@
 wandb/
+train_pure_ray_debug.sh
+train_pure_ray.sh
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

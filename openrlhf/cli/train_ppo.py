@@ -10,7 +10,7 @@ from transformers.trainer import get_scheduler
 
 from openrlhf.datasets import PromptDataset, SFTDataset
 from openrlhf.models import Actor, get_llm_for_sequence_regression
-from openrlhf.trainer import ReFTPRMTrainer
+from openrlhf.trainer import PURETrainer
 from openrlhf.utils import blending_datasets, get_strategy, get_tokenizer
 
 
@@ -235,7 +235,7 @@ def train(args):
     os.makedirs(args.save_path, exist_ok=True)
 
     # configure Trainer
-    trainer = ReFTPRMTrainer(
+    trainer = PURETrainer(
         strategy,
         actor,
         reward,

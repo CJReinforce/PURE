@@ -160,8 +160,6 @@ class ProcessRewardModelRayActor(BasePPORole):
             packing_samples=strategy.args.packing_samples,
         )
         strategy.print(model)
-        strategy.print("reward normalization status: {}".format(strategy.args.normalize_reward))
-        strategy.print("mean: {}, std {}".format(model.mean, model.std))
 
         self.model = self.strategy.prepare(model, is_rlhf=True)
         self.model.eval()
@@ -357,7 +355,7 @@ class PPORayActorGroup:
         return refs
 
 
-class ReFTPRMRayActorGroup(PPORayActorGroup):
+class PURERayActorGroup(PPORayActorGroup):
     # ActorModelRayActor call this function
     def async_fit_actor_model(
         self,
@@ -369,8 +367,6 @@ class ReFTPRMRayActorGroup(PPORayActorGroup):
         reward_actors = reward_model_group._actor_handlers
 
         refs = []
-        # TODO(wuxibin): actor model choose critic/reward/initial model in a
-        # round robin fashion, implement more efficient dispatching strategy.
         for i, actor in enumerate(self._actor_handlers):
             initial_actor = initial_actors[i % len(initial_actors)]
             reward_actor = reward_actors[i % len(reward_actors)]

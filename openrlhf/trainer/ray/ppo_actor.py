@@ -13,7 +13,7 @@ from transformers.trainer import get_scheduler
 
 from openrlhf.datasets import PromptDataset, SFTDataset
 from openrlhf.models import Actor
-from openrlhf.trainer import PPOTrainer, ReFTPRMTrainer
+from openrlhf.trainer import PPOTrainer, PURETrainer
 from openrlhf.trainer.ppo_utils import Experience, RemoteExperienceMaker
 from openrlhf.utils import blending_datasets, get_tokenizer
 from openrlhf.utils.deepspeed import DeepspeedStrategy
@@ -428,7 +428,7 @@ class ActorModelRayActor(BaseActorRayActor):
         )
 
 
-class ActorReFTPRMTrainer(ReFTPRMTrainer):
+class ActorPURETrainer(PURETrainer):
     def __init__(
         self,
         *args,
@@ -514,6 +514,7 @@ class ActorReFTPRMTrainer(ReFTPRMTrainer):
             )
         
         if self.save_hf_ckpt:
+            # delete oldest ckpt if exceeds max_ckpt_num
             if torch.distributed.get_rank() == 0 and os.path.exists(args.ckpt_path):
                 subdirs = sorted(
                     [
@@ -566,7 +567,7 @@ class ActorReFTPRMTrainer(ReFTPRMTrainer):
 
 
 @ray.remote(num_gpus=1)
-class ActorModelReFTPRMRayActor(BaseActorRayActor):
+class ActorModelPURERayActor(BaseActorRayActor):
     def fit(
         self,
         initial_model: ray.actor.ActorHandle,
@@ -578,7 +579,7 @@ class ActorModelReFTPRMRayActor(BaseActorRayActor):
         args = self.strategy.args
 
         # configure Trainer
-        trainer = ActorReFTPRMTrainer(
+        trainer = ActorPURETrainer(
             strategy,
             self.actor,
             reward_model,
@@ -590,17 +591,13 @@ class ActorModelReFTPRMRayActor(BaseActorRayActor):
             actor_scheduler=self.actor_scheduler,
             reward_model_optim=None,
             reward_model_scheduler=None,
-            remote_rm_url=None,
-            reward_fn=None,
             vllm_engines=vllm_engines,
             max_epochs=args.max_epochs,
             micro_train_batch_size=args.micro_train_batch_size,
             micro_rollout_batch_size=args.micro_rollout_batch_size,
             gradient_checkpointing=args.gradient_checkpointing,
-            critic_train_remote=False,
             tokenizer=self.tokenizer,
             prompt_max_len=args.prompt_max_len,
-            value_clip=0.,
             eps_clip=args.eps_clip,
             gamma=args.gamma,
             lambd=args.lambd,
@@ -609,7 +606,7 @@ class ActorModelReFTPRMRayActor(BaseActorRayActor):
             ema_beta=0.992,
             ptx_coef=args.ptx_coef,
             max_norm=args.max_norm,
-            # fro GPT generation
+            # for GPT generation
             do_sample=True,
             max_new_tokens=args.generate_max_len,
             max_length=args.max_len,
