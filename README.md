@@ -108,7 +108,7 @@ If you find our code useful, we would appreciate it if you could cite our work:
 
 ```bibtex
 @misc{cheng2025pure,
-  title={PRM is still Effective and Compute-Efficient for LLM Math Reasoning},
+  title={PURE: PRM is still Effective and Compute-Efficient for LLM Math Reasoning},
   author={Jie Cheng, Lijun Li, Gang Xiong, Yisheng Lv},
   publisher={GitHub},
   journal={GitHub repository},
