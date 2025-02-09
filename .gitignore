@@ -1,6 +1,10 @@
 wandb/
+train_ppo_reft_prm_debug_1_gpu.sh
+train_ppo_reft_prm.sh
 train_pure_ray_debug.sh
 train_pure_ray.sh
+8k_math_72k_numina.jsonl
+data/process.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
