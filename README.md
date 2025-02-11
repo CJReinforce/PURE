@@ -8,17 +8,17 @@
 
 **TL;DR:** Starting from Qwen2.5-Math-7B, Process Reward Model (PRM) trained on PRM800K dataset can fine-tune LLM to achieve superior mathematical reasoning capabilities that are comparable to previous baselines, using **only 8 A100 GPUs within 1 day**.
 
-## News:
+## 🎉 News:
 
 - [2025/02/09] We release the training, evaluation code, [wandb log](https://api.wandb.ai/links/cjreinforce/xvwk7pe9), and [checkpoints](https://huggingface.co/collections/jinachris/pure-67a85510dc24acd26bb8109f). Paper's on it's way!
 
-## Introduction
+## 📖 Introduction
 
-This month, we saw a huge boost in LLM reasoning power from the verifiable reward (VR)-based Reinforcement learning fine-tuning (ReFT), like [DeepSeek R1](https://github.com/deepseek-ai/DeepSeek-R1), [SimpleRL-Zero](https://github.com/hkust-nlp/simpleRL-reason), and [TinyZero](https://github.com/Jiayi-Pan/TinyZero). Previous work has encountered challenges and made unsuccessful attempts in exploring PRM, so we wondered: How far can PRM actually take us? How does it stack up against VR-based methods in reasoning performance, training costs, and how the training works?
+This month, we saw a huge boost in LLM reasoning power from the verifiable reward (VR)-based Reinforcement learning fine-tuning (ReFT), like [DeepSeek R1](https://github.com/deepseek-ai/DeepSeek-R1), [SimpleRL-Zero](https://github.com/hkust-nlp/simpleRL-reason), and [TinyZero](https://github.com/Jiayi-Pan/TinyZero). Previous work has encountered challenges and made unsuccessful attempts in exploring PRM, so we wonder: How far can PRM actually take us? How does it stack up against VR-based methods in reasoning performance, training costs?
 
-To answer these questions, we present **PURE** (**P**rocess-s**U**pervised **R**einforcement l**E**arning). Using Qwen2.5-Math-7B as the base model, we train a PRM on 369k data from the PRM800K dataset, and then fine-tune another Qwen2.5-Math-7B model using only 8K MATH prompts, process rewards from the PRM, optional verifiable reward, and a step-level PPO-like algorithm. For the RL algorithm, we use the PPO loss with an RLOO advantage estimator. We improve credit assignment by using a weighted sum of the process rewards, $\sum_t \text{softmax}(-\text{PR}_t/T)\cdot\text{PR}_t$ which approximates ${\min}_t \text{PR}_t$ function when $T\rightarrow 0$, instead of the usual gamma decay sum $\sum_t \gamma^t \cdot \text{PR}_t$ to calculate return.
+To answer these questions, we present **PURE** (**P**rocess-s**U**pervised **R**einforcement l**E**arning). Using Qwen2.5-Math-7B as the base model, we train a PRM on 369k data from the PRM800K dataset, and then fine-tune another Qwen2.5-Math-7B model using only 8K MATH prompts, process rewards from the PRM, and optional verifiable rewards. For the RL algorithm, we use the PPO loss with an RLOO advantage estimator. We improve credit assignment by using a weighted sum of the process rewards, $\sum_t \text{softmax}(-\text{PR}_t/T)\cdot\text{PR}_t$ which approximates ${\min}_t \text{PR}_t$ when $T\rightarrow 0$, instead of the usual gamma decay sum $\sum_t \gamma^t \cdot \text{PR}_t$ to calculate return.
 
-The final model hit 82.0% on MATH500, 65.0% on AMC, and 48.8% on average across 5 benchmarks, beating Qwen2.5-math-7B-instruct and matching SimpleRL-Zero with just 1/5th of the compute. Our framework supports multiple reward types: process reward (PURE-PRM), verifiable reward (PURE-VR), or a mix of both (PURE-PRM+VR), as shown in the table.
+The final model achieves 82.0% on MATH500, 65.0% on AMC, and 48.8% on average across 5 benchmarks, beating Qwen2.5-math-7B-instruct and matching SimpleRL-Zero with just 1/5th of the compute resources. Our framework supports multiple reward types: process reward (PURE-PRM), verifiable reward (PURE-VR), or a mix of both (PURE-PRM+VR), as shown in the following table.
 
 ***All results are in pass@1 accuracy***
 
@@ -51,7 +51,7 @@ The final model hit 82.0% on MATH500, 65.0% on AMC, and 48.8% on average across 
 | **RL Data**    | 66K queries × 32 samples        | ~3.647M × 16                   | 150K queries × 4 samples | 8K queries × 8 samples   | 8K queries × 4 samples  |
 | **GPUs**       | -                               | 80 H100 at most                | 8 A100                   | 40 A100                  | 8 A100                  |
 
-## Quick Start
+## 🔧 Quick Start
 
 ### Installation
 
@@ -83,7 +83,7 @@ bash examples/scripts/train_pure.sh
 
 We used [Qwen Math's codebase](https://github.com/QwenLM/Qwen2.5-Math/tree/main/evaluation) for evaluation (i.e., pass@1 accuracy). For fairness considerations, we completely prohibited solving problems by calling code, following SimpleRL. Please follow the `/eval` instructions for evaluation.
 
-## Discussions
+## :bulb: Discussions
 
 ### Reward Hacking
 
@@ -91,25 +91,25 @@ Reward hacking often occurs when relying solely on process rewards from the PRM,
 
 In our experiments, reward hacking usually happened within the first 200 steps. However, before this occurs, the model performs well. For example, the Qwen2.5-7B-PURE-PRM model shown in the table above is saved at step 100, before hacking began.
 
-Another factor that can trigger reward hacking is the baseline choice in RLOO. [PRIME](https://github.com/PRIME-RL/PRIME) uses the average process reward per step from other answers in the group as the baseline. This setting favors answers with fewer steps. Since we split steps using a specific character (i.e., "\n\n"), we find the model sometimes avoids this character, producing answers with fewer steps but excessively long tokens per step. The PRM struggles to assign accurate process rewards to such lengthy steps. To address this,  we change the baseline to the average reward per token from other answers, multiplied by the number of tokens in the current step. This improvement penalizes steps with more tokens more heavily and removes the bias toward fewer steps.
+Another factor that can trigger reward hacking is the baseline choice in RLOO. One intuitive way is to use the average process reward per step from other answers in the group as the baseline. However, this setting favors answers with fewer steps. Since we split steps using a specific character (i.e., "\n\n"), we find the model sometimes avoids this character, producing answers with fewer steps but excessively long tokens per step. The PRM struggles to assign accurate process rewards to such lengthy steps. To address this,  we change the baseline to the average reward per token from other answers, multiplied by the number of tokens in the current step. This improvement penalizes steps with more tokens more heavily and removes the bias toward fewer steps.
 
 ### Aha Moment
 
-Unfortunately, we did not observe the aha moment, self-reflection, or long CoT for schemes using PRM. We suppose that even if an answer like "<response A> Wait, wait. <response B>" is generated in the rollout, the PRM will assign negative process rewards to response A and positive process rewards to response B. The step-level PPO algorithm then probably decrease the sampling probability of response A, and increase the sampling probability of response B, resulting in the final model that just outputs response B and thus no aha moment.
+Unfortunately, we did not observe the aha moment, self-reflection, or long CoT for schemes using PRM. We suppose that even if an answer like "\<response A\> Wait, wait. \<response B\>" is generated in the rollout, the PRM will assign negative process rewards to response A and positive process rewards to response B. The PPO algorithm then probably decrease the sampling probability of response A, and increase the sampling probability of response B, resulting in the final model that just outputs response B and thus no aha moment.
 
-## TODO:
+## 📝 TODO:
 
 - [ ] paper with more discussions and evaluations
 - [ ] attempts to mitigate reward hacking for PRM (Online PURE).
 
-## Citation
+## 🎈 Citation
 
 If you find our code useful, we would appreciate it if you could cite our work:
 
 ```bibtex
 @misc{cheng2025pure,
-  title={PRM is still Effective and Compute-Efficient for LLM Math Reasoning},
-  author={Jie Cheng, Lijun Li, Gang Xiong, Yisheng Lv},
+  title={PURE: PRM is still Effective and Compute-Efficient for LLM Math Reasoning},
+  author={Jie Cheng, Lijun Li, Gang Xiong, Jing Shao, Yisheng Lv},
   publisher={GitHub},
   journal={GitHub repository},
   howpublished={\url{https://github.com/CJReinforce/PURE}},
@@ -117,7 +117,7 @@ If you find our code useful, we would appreciate it if you could cite our work:
 }
 ```
 
-## Acknowledgement
+## 🌻 Acknowledgement
 
 We implement our RL algorithm based on [OpenRLHF](https://github.com/OpenRLHF/OpenRLHF). We thank the developers of OpenRLHF and the author of SimpleRL for discussion! In addition, we also refer to [TRL](https://github.com/huggingface/trl), [PRIME](https://github.com/PRIME-RL/PRIME)'s code and hyperparameter values to varying degrees. Thank them for their wonderful work!
 
