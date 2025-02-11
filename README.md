@@ -90,7 +90,7 @@ We evaluate our PRM using BoN method, [ProcessBench](https://arxiv.org/abs/2412.
 | RLHFlow-PRM-Deepseek-8B | 38.8     | 33.8     | 16.9          | 16.9     | 26.6     |
 | Skywork-PRM-7B          | **70.8** | 53.6     | 22.9          | 21.0     | 42.1     |
 | Qwen2.5-Math-7B-PRM800K | 68.2     | 62.6     | **50.7**      | 44.3     | 56.5     |
-| Our PRM                 | 69.0     | **66.5** | 48.4          | **45.9** | **57.5** |
+| Our PRM-7B              | 69.0     | **66.5** | 48.4          | **45.9** | **57.5** |
 
 - On PRMBench, which is designed to assess the fine-grained error detection capabilities of PRMs, our PRM gets an overall score of 65.3, ranking 🥉third among open source PRMs. You can find our PRM named `Pure-PRM-7B`	on the [official leaderboard](https://prmbench.github.io/).
 
