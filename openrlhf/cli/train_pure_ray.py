@@ -263,7 +263,7 @@ if __name__ == "__main__":
     parser.add_argument("--pretrain_split", type=str, default="train")
 
     parser.add_argument("--input_key", type=str, default="input", help="JSON dataset key")
-    parser.add_argument("--input_template", type=str, default=None)
+    parser.add_argument("--input_template", type=str, default='{}\n\nPlease reason step by step with steps separated by "\n\n", and put your final answer within \\boxed{{}}.')
     parser.add_argument(
         "--apply_chat_template", action="store_true", default=False, help="Use HF tokenizer chat template"
     )
