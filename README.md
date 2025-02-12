@@ -18,7 +18,7 @@ This month, we saw a huge boost in LLM reasoning power from the verifiable rewar
 
 To answer these questions, we present **PURE** (**P**rocess-s**U**pervised **R**einforcement l**E**arning). Using Qwen2.5-Math-7B as the base model, we train a PRM on 369k data from the PRM800K dataset, and then fine-tune another Qwen2.5-Math-7B model using only 8K MATH prompts, process rewards from the PRM, and optional verifiable rewards. For the RL algorithm, we use the PPO loss with an RLOO advantage estimator. We improve credit assignment by using a weighted sum of the process rewards, $\sum_t \text{softmax}(-\text{PR}_t/T)\cdot\text{PR}_t$ which approximates ${\min}_t \text{PR}_t$ when $T\rightarrow 0$, instead of the usual gamma decay sum $\sum_t \gamma^t \cdot \text{PR}_t$ to calculate return.
 
-The final model achieves 82.0% on MATH500, 65.0% on AMC, and 48.8% on average across 5 benchmarks, beating Qwen2.5-math-7B-instruct and matching SimpleRL-Zero with just 1/5th of the compute resources. Our framework supports multiple reward types: process reward (PURE-PRM), verifiable reward (PURE-VR), or a mix of both (PURE-PRM+VR), as shown in the following table.
+The final model achieves 81.4% on MATH500, 72.5% on AMC, and 50.9% on average across 5 benchmarks, beating Qwen2.5-math-7B-instruct and SimpleRL-Zero with just 1/5th of the compute resources. Our framework supports multiple reward types: process reward (PURE-PRM), verifiable reward (PURE-VR), or a mix of both (PURE-PRM+VR), as shown in the following table.
 
 ***All results are in pass@1 accuracy***
 
@@ -30,7 +30,7 @@ The final model achieves 82.0% on MATH500, 65.0% on AMC, and 48.8% on average ac
 | rStar-Math-7B              | 26.7      | 78.4     | 47.5     | -            | **47.1**      | -        |
 | Eurus-2-7B-PRIME           | 26.7      | 79.2     | 57.8     | **38.6**     | 42.1          | 48.9     |
 | Qwen2.5-7B-SimpleRL-Zero   | **33.3**  | 77.2     | 62.5     | 33.5         | 37.6          | 48.8     |
-| Qwen2.5-7B-PURE-PRM+VR     | 23.3      | **82.0** | **67.5** | 36.8         | 44.4          | **50.8** |
+| Qwen2.5-7B-PURE-PRM+VR     | 16.7      | **81.4** | **72.5** | **38.6**     | 45.5          | **50.9** |
 | Qwen2.5-7B-PURE-PRM        | 16.7      | 81.0     | 60.0     | 37.5         | 43.4          | 47.7     |
 | Qwen2.5-7B-PURE-VR         | 16.7      | 77.0     | 60.0     | 37.5         | 40.1          | 46.3     |
 
