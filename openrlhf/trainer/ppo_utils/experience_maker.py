@@ -513,10 +513,11 @@ class NaiveExperienceMaker(ABC):
         assert args.advantage_estimator == "rloo"
 
         # micro_rollout_batch_size must be a multiple of n_samples_per_prompt
+        # calculate: PR - PR_baseline + coef * (VR - VR_baseline)
         process_rewards = []
         for experience in experiences:
             # process reward
-            process_reward = experience.info["process_reward"]
+            process_reward = experience.info["process_reward"].clone()
             original_shape = process_reward.shape
             process_reward = process_reward.reshape(
                 -1, args.n_samples_per_prompt, process_reward.size(1),

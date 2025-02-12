@@ -44,7 +44,7 @@ The final model achieves 81.4% on MATH500, 72.5% on AMC, and 50.9% on average ac
 | **Base Model** | Qwen2.5-Math-7B                 | Qwen2.5-Math-7B                | Qwen2.5-Math-7B          | Qwen2.5-Math-7B          | Qwen2.5-Math-7B         |
 | **SFT Data**   | 2.5M (open-source and in-house) | ~7.3M (MATH, NuminaMath, etc.) | 230K                     | 0                        | 0                       |
 | **RM Data**    | 618K (in-house)                 | ~7k (in-house)                 | 0                        | 0                        | 369k (open-source)      |
-| **RM**         | Qwen2.5-Math-RM (72B)           | None                           | Eurus-2-7B-SFT           | None                     | Qwen2.5-Math-7B-PRM800K |
+| **RM**         | Qwen2.5-Math-RM (72B)           | None                           | Eurus-2-7B-SFT           | None                     | [Qwen2.5-Math-7B-PRM800K](https://huggingface.co/jinachris/Qwen2.5-Math-7B-PRM800K) |
 | **RL Data**    | 66K queries × 32 samples        | ~3.647M × 16                   | 150K queries × 4 samples | 8K queries × 8 samples   | 8K queries × 4 samples  |
 | **GPUs**       | -                               | 80 H100 at most                | 8 A100                   | 40 A100                  | 8 A100                  |
 
