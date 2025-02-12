@@ -23,19 +23,16 @@ The final model achieves 82.0% on MATH500, 65.0% on AMC, and 48.8% on average ac
 ***All results are in pass@1 accuracy***
 
 
-|                            | AIME 2024 | MATH 500 | AMC      | Minerva Math | OlympiadBench | Avg. |
-| -------------------------- | --------- | -------- | -------- | ------------ | ------------- | ---- |
-| Qwen2.5-Math-7B-Base       | 16.7      | 52.4     | 52.5     | 12.9         | 16.4          | 30.2 |
-| Qwen-2.5-Math-7B-Instruct  | 13.3      | 79.8     | 50.6     | 34.6         | 40.7          | 43.8 |
-| rStar-Math-7B              | 26.7      | 78.4     | 47.5     | -            | **47.1**      | -    |
-| Eurus-2-7B-PRIME           | 26.7      | 79.2     | 57.8     | **38.6**     | 42.1          | 48.9 |
-| Qwen2.5-7B-SimpleRL-Zero   | 33.3      | 77.2     | 62.5     | 33.5         | 37.6          | 48.8 |
-| †Qwen2.5-7B-PURE-PRM+VR    | 16.7      | **82.0** | **65.0** | 38.2         | 42.1          | 48.8 |
-| †Qwen2.5-7B-PURE-PRM+VR    | 23.3      | 80.6     | 60.0     | 36.8         | 43.3          | 48.8 |
-| Qwen2.5-7B-PURE-PRM        | 16.7      | 81.0     | 60.0     | 37.5         | 43.4          | 47.7 |
-| Qwen2.5-7B-PURE-VR         | 16.7      | 77.0     | 60.0     | 37.5         | 40.1          | 46.3 |
-
-† We found two checkpoints that got the same average score when tuning hyperparameters.
+|                            | AIME 2024 | MATH 500 | AMC      | Minerva Math | OlympiadBench | Avg.     |
+| -------------------------- | --------- | -------- | -------- | ------------ | ------------- | -------- |
+| Qwen2.5-Math-7B-Base       | 16.7      | 52.4     | 52.5     | 12.9         | 16.4          | 30.2     |
+| Qwen-2.5-Math-7B-Instruct  | 13.3      | 79.8     | 50.6     | 34.6         | 40.7          | 43.8     |
+| rStar-Math-7B              | 26.7      | 78.4     | 47.5     | -            | **47.1**      | -        |
+| Eurus-2-7B-PRIME           | 26.7      | 79.2     | 57.8     | **38.6**     | 42.1          | 48.9     |
+| Qwen2.5-7B-SimpleRL-Zero   | **33.3**  | 77.2     | 62.5     | 33.5         | 37.6          | 48.8     |
+| Qwen2.5-7B-PURE-PRM+VR     | 20.0      | **83.0** | **67.5** | **38.6**     | 43.6          | **50.5** |
+| Qwen2.5-7B-PURE-PRM        | 16.7      | 81.0     | 60.0     | 37.5         | 43.4          | 47.7     |
+| Qwen2.5-7B-PURE-VR         | 16.7      | 77.0     | 60.0     | 37.5         | 40.1          | 46.3     |
 
 > Note: [rStar-Math-7B](https://arxiv.org/abs/2501.04519), [Eurus-2-7B-PRIME](https://github.com/PRIME-RL/PRIME), and [SimpleRL-Zero](https://github.com/hkust-nlp/simpleRL-reason) are also based on Qwen-2.5-Math-7B.
 

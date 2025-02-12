@@ -22,7 +22,7 @@ python -m openrlhf.cli.train_pure_ray \
    --advantage_estimator rloo \
    --reward_baseline token \
    --reward_mode PRMVR \
-   --verifiable_reward_coef 1.0 \
+   --verifiable_reward_coef 0.1 \
    --n_samples_per_prompt 4 \
    --micro_rollout_batch_size 4 \
    --rollout_batch_size 64 \
@@ -34,7 +34,7 @@ python -m openrlhf.cli.train_pure_ray \
    --reward_pretrain $PRM_PATH \
    --save_path $SAVE_PATH \
    --ckpt_path $SAVE_PATH/checkpoints \
-   --save_steps 10 \
+   --save_steps 20 \
    --max_ckpt_num 15 \
    --logging_steps 1 \
    --eval_steps -1 \
