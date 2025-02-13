@@ -6,7 +6,7 @@
 
 </div>
 
-**TL;DR:** Starting from Qwen2.5-Math-7B, Process Reward Model (PRM) trained on PRM800K dataset can fine-tune LLM to achieve superior mathematical reasoning capabilities that are comparable to previous baselines, using **only 8 A100 GPUs within 1 day**.
+**TL;DR:** Process Reward Model (PRM) trained on PRM800K dataset can fine-tune LLM to achieve SOTA-level mathematical reasoning capabilities for **< $150 (8 A100 GPUs * 16 hours)**.
 
 ## 🎉 News:
 
@@ -16,12 +16,11 @@
 
 This month, we saw a huge boost in LLM reasoning power from the verifiable reward (VR)-based Reinforcement learning fine-tuning (ReFT), like [DeepSeek R1](https://github.com/deepseek-ai/DeepSeek-R1), [SimpleRL-Zero](https://github.com/hkust-nlp/simpleRL-reason), and [TinyZero](https://github.com/Jiayi-Pan/TinyZero). Previous work has encountered challenges and made unsuccessful attempts in exploring PRM, so we wonder: How far can PRM actually take us? How does it stack up against VR-based methods in reasoning performance, training costs?
 
-To answer these questions, we present **PURE** (**P**rocess-s**U**pervised **R**einforcement l**E**arning). Using Qwen2.5-Math-7B as the base model, we train a PRM on 369k data from the PRM800K dataset, and then fine-tune another Qwen2.5-Math-7B model using only 8K MATH prompts, process rewards from the PRM, and optional verifiable rewards. For the RL algorithm, we use the PPO loss with an RLOO advantage estimator. We improve credit assignment by using a weighted sum of the process rewards, $\sum_t \text{softmax}(-\text{PR}_t/T)\cdot\text{PR}_t$ which approximates ${\min}_t \text{PR}_t$ when $T\rightarrow 0$, instead of the usual gamma decay sum $\sum_t \gamma^t \cdot \text{PR}_t$ to calculate return.
+To answer these questions, we present **PURE** (**P**rocess-s**U**pervised **R**einforcement l**E**arning). Using Qwen2.5-Math-7B as the base model, we train a PRM on 369k data from the PRM800K dataset, and then fine-tune another Qwen2.5-Math-7B model using only 8K MATH prompts, process rewards from the PRM, and optional verifiable rewards. For the RL algorithm, we use the PPO loss with an RLOO advantage estimator. We improve credit assignment by using a weighted sum of the process rewards, $\sum_t \text{softmax}(-\text{PR}_t/T)\cdot\text{PR}_t$ which approximates ${\min}_t \text{PR}_t$ when $T\rightarrow 0$, instead of the usual gamma decay sum $\sum_t \gamma^t \cdot \text{PR}_t$ to calculate return. Our framework supports multiple reward types: process reward (PURE-PRM), verifiable reward (PURE-VR), or a mix of both (PURE-PRM+VR), as shown in the following table.
 
-The final model achieves 82.2% on MATH500, 75.0% on AMC, and 52.3% on average across 5 benchmarks, beating Qwen2.5-math-7B-instruct and SimpleRL-Zero with just 1/5th of the compute resources. Our framework supports multiple reward types: process reward (PURE-PRM), verifiable reward (PURE-VR), or a mix of both (PURE-PRM+VR), as shown in the following table.
+📊 The final model achieves pass@1 accuracy of 82.6% on MATH500, 82.5% on AMC, and 53.3% on average across 5 benchmarks, beating Qwen2.5-math-7B-instruct, PRIME, and SimpleRL with just either <1/50th RL data or 1/5th of the compute resources. 
 
 ***All results are in pass@1 accuracy***
-
 
 |                            | AIME 2024 | MATH 500 | AMC      | Minerva Math | OlympiadBench | Avg.     |
 | -------------------------- | --------- | -------- | -------- | ------------ | ------------- | -------- |
@@ -30,9 +29,11 @@ The final model achieves 82.2% on MATH500, 75.0% on AMC, and 52.3% on average ac
 | rStar-Math-7B              | 26.7      | 78.4     | 47.5     | -            | **47.1**      | -        |
 | Eurus-2-7B-PRIME           | 26.7      | 79.2     | 57.8     | **38.6**     | 42.1          | 48.9     |
 | Qwen2.5-7B-SimpleRL-Zero   | **33.3**  | 77.2     | 62.5     | 33.5         | 37.6          | 48.8     |
-| Qwen2.5-7B-PURE-PRM+VR     | 23.3      | **82.2** | **75.0** | 37.1         | 44.0          | **52.3** |
+| Qwen2.5-7B-PURE-PRM+VR*     | 20.0      | **82.6** | **82.5** | 37.1         | 44.1          | **53.3** |
 | Qwen2.5-7B-PURE-PRM        | 16.7      | 81.0     | 60.0     | 37.5         | 43.4          | 47.7     |
 | Qwen2.5-7B-PURE-VR         | 16.7      | 77.0     | 60.0     | 37.5         | 40.1          | 46.3     |
+
+*The SOTA model was trained using 8K MATH problems, of which only ~800 gave ground-truth final answers that could be used to calculate VRs.
 
 > Note: [rStar-Math-7B](https://arxiv.org/abs/2501.04519), [Eurus-2-7B-PRIME](https://github.com/PRIME-RL/PRIME), and [SimpleRL-Zero](https://github.com/hkust-nlp/simpleRL-reason) are also based on Qwen-2.5-Math-7B.
 
@@ -46,7 +47,7 @@ The final model achieves 82.2% on MATH500, 75.0% on AMC, and 52.3% on average ac
 | **RM Data**    | 618K (in-house)                 | ~7k (in-house)                 | 0                        | 0                        | 369k (open-source)      |
 | **RM**         | Qwen2.5-Math-RM (72B)           | None                           | Eurus-2-7B-SFT           | None                     | [Qwen2.5-Math-7B-PRM800K](https://huggingface.co/jinachris/Qwen2.5-Math-7B-PRM800K) |
 | **RL Data**    | 66K queries × 32 samples        | ~3.647M × 16                   | 150K queries × 4 samples | 8K queries × 8 samples   | 8K queries × 4 samples  |
-| **GPUs**       | -                               | 80 H100 at most                | 8 A100                   | 40 A100                  | 8 A100                  |
+| **GPUs**       | -                               | 80 H100 at most                | 8 A100                   | 40 H100                  | 8 A100                  |
 
 ## 🔧 Quick Start
 
