@@ -18,7 +18,7 @@ This month, we saw a huge boost in LLM reasoning power from the verifiable rewar
 
 To answer these questions, we present **PURE** (**P**rocess-s**U**pervised **R**einforcement l**E**arning). Using Qwen2.5-Math-7B as the base model, we train a PRM on 369k data from the PRM800K dataset, and then fine-tune another Qwen2.5-Math-7B model using only 8K MATH prompts, process rewards from the PRM, and optional verifiable rewards. For the RL algorithm, we use the PPO loss with an RLOO advantage estimator. We improve credit assignment by using a weighted sum of the process rewards, $\sum_t \text{softmax}(-\text{PR}_t/T)\cdot\text{PR}_t$ which approximates ${\min}_t \text{PR}_t$ when $T\rightarrow 0$, instead of the usual gamma decay sum $\sum_t \gamma^t \cdot \text{PR}_t$ to calculate return.
 
-The final model achieves 81.4% on MATH500, 72.5% on AMC, and 50.9% on average across 5 benchmarks, beating Qwen2.5-math-7B-instruct and SimpleRL-Zero with just 1/5th of the compute resources. Our framework supports multiple reward types: process reward (PURE-PRM), verifiable reward (PURE-VR), or a mix of both (PURE-PRM+VR), as shown in the following table.
+The final model achieves 82.2% on MATH500, 75.0% on AMC, and 52.3% on average across 5 benchmarks, beating Qwen2.5-math-7B-instruct and SimpleRL-Zero with just 1/5th of the compute resources. Our framework supports multiple reward types: process reward (PURE-PRM), verifiable reward (PURE-VR), or a mix of both (PURE-PRM+VR), as shown in the following table.
 
 ***All results are in pass@1 accuracy***
 
