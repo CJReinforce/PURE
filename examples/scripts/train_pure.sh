@@ -22,7 +22,7 @@ python -m openrlhf.cli.train_pure_ray \
    --advantage_estimator rloo \
    --reward_baseline token \
    --reward_mode PRMVR \
-   --verifiable_reward_coef 0.1 \
+   --verifiable_reward_coef 1.0 \
    --n_samples_per_prompt 4 \
    --micro_rollout_batch_size 4 \
    --rollout_batch_size 64 \
@@ -44,7 +44,7 @@ python -m openrlhf.cli.train_pure_ray \
    --generate_max_len 2048 \
    --zero_stage 2 \
    --bf16 \
-   --prompt_data data/math_level3to5_data_processed_with_qwen_prompt.json \
+   --prompt_data data/data/8k_math_879_answers.json \
    --input_key question \
    --max_samples 1000000 \
    --adam_offload \
