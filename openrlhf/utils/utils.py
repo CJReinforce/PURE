@@ -150,6 +150,7 @@ def turn_process_reward_logits_to_reward(
     logits, reward_mask, 
     return_outcome_reward=False, 
     temperature=0.1,
+    disable_weighted_reward=False,
 ):
     assert logits.ndim == 3 and \
         logits.size(-1) == 2 and \
@@ -158,13 +159,15 @@ def turn_process_reward_logits_to_reward(
     softmax_logits = logits.softmax(dim=-1)
     process_reward = softmax_logits[..., 1] - softmax_logits[..., 0]
     process_reward = process_reward.masked_fill(~reward_mask, 0)
-    weight = torch.softmax(
-        -process_reward.masked_fill(
-            ~reward_mask, float("inf")
-        ) / temperature, 
-        dim=-1,
-    )
-    process_reward = weight * process_reward
+    
+    if not disable_weighted_reward:
+        weight = torch.softmax(
+            -process_reward.masked_fill(
+                ~reward_mask, float("inf")
+            ) / temperature, 
+            dim=-1,
+        )
+        process_reward = weight * process_reward
 
     if return_outcome_reward:
         outcome_reward = process_reward.sum(dim=-1)

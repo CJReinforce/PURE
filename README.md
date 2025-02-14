@@ -29,9 +29,9 @@ To answer these questions, we present **PURE** (**P**rocess-s**U**pervised **R**
 | rStar-Math-7B              | 26.7      | 78.4     | 47.5     | -            | **47.1**      | -        |
 | Eurus-2-7B-PRIME           | 26.7      | 79.2     | 57.8     | **38.6**     | 42.1          | 48.9     |
 | Qwen2.5-7B-SimpleRL-Zero   | **33.3**  | 77.2     | 62.5     | 33.5         | 37.6          | 48.8     |
-| Qwen2.5-7B-PURE-PRM+VR*     | 20.0      | **82.6** | **82.5** | 37.1         | 44.1          | **53.3** |
-| Qwen2.5-7B-PURE-PRM        | 16.7      | 81.0     | 60.0     | 37.5         | 43.4          | 47.7     |
-| Qwen2.5-7B-PURE-VR         | 16.7      | 77.0     | 60.0     | 37.5         | 40.1          | 46.3     |
+| Qwen2.5-7B-PURE-PRM+VR*    | 20.0      | **82.6** | **82.5** | 37.1         | 44.1          | **53.3** |
+| Qwen2.5-7B-PURE-PRM        | 16.7      | 81.8     | 60.0     | 38.2         | 44.7          | 49.3     |
+| Qwen2.5-7B-PURE-VR         | 23.3      | 79.4     | 60.0     | 36.8         | 41.8          | 48.3     |
 
 *The SOTA model was trained using 8K MATH problems, of which only ~800 gave ground-truth final answers that could be used to calculate VRs.
 

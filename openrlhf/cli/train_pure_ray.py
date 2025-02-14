@@ -174,6 +174,7 @@ if __name__ == "__main__":
     # PPO
     parser.add_argument("--save_path", type=str, default="./ckpt")
     parser.add_argument("--num_episodes", type=int, default=1)
+    parser.add_argument("--max_steps", type=int, default=500)
     parser.add_argument("--rollout_batch_size", type=int, default=1024)
     parser.add_argument("--micro_rollout_batch_size", type=int, default=8)
     parser.add_argument("--max_epochs", type=int, default=1)
@@ -237,6 +238,7 @@ if __name__ == "__main__":
     )
     parser.add_argument("--verifiable_reward_coef", type=float, default=1.0)
     parser.add_argument("--disable_advantage_normalization", action="store_true", default=False)
+    parser.add_argument("--disable_weighted_reward", action="store_true", default=False)
 
     #  Models
     parser.add_argument("--pretrain", type=str, default=None, help="HF model name or path")

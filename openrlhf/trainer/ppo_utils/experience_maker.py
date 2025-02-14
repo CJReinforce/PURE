@@ -458,6 +458,7 @@ class NaiveExperienceMaker(ABC):
                     process_reward, score_mask, 
                     return_outcome_reward=False, 
                     temperature=0.1,
+                    disable_weighted_reward=self.strategy.args.disable_weighted_reward,
                 )
                 process_reward_matrix[samples.reward_mask] = process_reward[
                     score_mask].to(dtype=token_log_probs.dtype)
@@ -800,6 +801,7 @@ class RemoteExperienceMaker(NaiveExperienceMaker):
                 process_reward, score_mask, 
                 return_outcome_reward=False, 
                 temperature=0.1,
+                disable_weighted_reward=self.strategy.args.disable_weighted_reward,
             )
             process_reward_matrix[samples.reward_mask] = process_reward[
                 score_mask].to(dtype=action_log_probs.dtype)

@@ -184,6 +184,7 @@ class PURETrainer(ABC):
         steps = consumed_samples // args.rollout_batch_size + 1
         start_episode = consumed_samples // args.rollout_batch_size // num_rollouts_per_episodes
         consumed_samples = consumed_samples % (num_rollouts_per_episodes * args.rollout_batch_size)
+        exceeds_max_steps = False
 
         for episode in range(start_episode, args.num_episodes):
             if isinstance(self.prompts_dataloader.sampler, DistributedSampler):
@@ -243,6 +244,13 @@ class PURETrainer(ABC):
 
                 pbar.update()
                 steps = steps + 1
+
+                if steps > args.max_steps:
+                    exceeds_max_steps = True
+                    break
+            
+            if exceeds_max_steps:
+                break
 
         if self._wandb is not None and self.strategy.is_rank_0():
             self._wandb.finish()
