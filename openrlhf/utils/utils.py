@@ -156,6 +156,7 @@ def turn_process_reward_logits_to_reward(
         logits.size(-1) == 2 and \
             reward_mask.ndim == 2 and \
                 reward_mask.shape == logits.shape[:2]
+    
     softmax_logits = logits.softmax(dim=-1)
     process_reward = softmax_logits[..., 1] - softmax_logits[..., 0]
     process_reward = process_reward.masked_fill(~reward_mask, 0)
@@ -167,7 +168,14 @@ def turn_process_reward_logits_to_reward(
             ) / temperature, 
             dim=-1,
         )
-        process_reward = weight * process_reward
+    else:
+        weight = torch.softmax(
+            torch.ones_like(process_reward).masked_fill(
+                ~reward_mask, -float("inf")
+            ), 
+            dim=-1,
+        )
+    process_reward = weight * process_reward
 
     if return_outcome_reward:
         outcome_reward = process_reward.sum(dim=-1)

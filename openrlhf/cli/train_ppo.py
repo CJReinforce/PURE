@@ -304,6 +304,7 @@ if __name__ == "__main__":
     parser.add_argument("--rollout_batch_size", type=int, default=512)
     parser.add_argument("--micro_rollout_batch_size", type=int, default=8)
     parser.add_argument("--max_epochs", type=int, default=1)
+    parser.add_argument("--max_steps", type=int, default=500)
     parser.add_argument("--prompt_max_len", type=int, default=1024, help="Max tokens for each prompt")
     parser.add_argument("--generate_max_len", type=int, default=1024, help="Max tokens to generate in PPO")
     parser.add_argument("--max_len", type=int, default=None, help="deprecated max_len")
@@ -381,6 +382,7 @@ if __name__ == "__main__":
     )
     parser.add_argument("--verifiable_reward_coef", type=float, default=1.0)
     parser.add_argument("--disable_advantage_normalization", action="store_true", default=False)
+    parser.add_argument("--disable_weighted_reward", action="store_true", default=False)
 
     # LoRA
     parser.add_argument("--load_in_4bit", action="store_true", default=False)

@@ -28,7 +28,7 @@ def _validate_args(args):
             actor_world_size % args.vllm_num_engines == 0
         ), f"actor_world_size must be divisible by vllm_num_engines, got {actor_world_size} and {args.vllm_num_engines}"
     
-    assert args.micro_rollout_batch_size % args.n_samples_per_prompt == 0, "Not supported yet"
+    # assert args.micro_rollout_batch_size % args.n_samples_per_prompt == 0, "Not supported yet"
     assert args.gamma == 1
     assert not args.packing_samples
     assert args.advantage_estimator == "rloo"
@@ -312,5 +312,8 @@ if __name__ == "__main__":
             args.flash_attn = True
         assert args.vllm_num_engines > 0, "Only support `--packing_samples` with vLLM."
         assert not args.pretrain_data, "`--pretrain_data` is not supported with `--packing_samples` yet."
+
+    if 'deepseek' in args.pretrain.lower() and args.input_template:
+        args.input_template += ' <think>\n'
 
     train(args)

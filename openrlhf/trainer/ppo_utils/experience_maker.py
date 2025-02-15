@@ -176,7 +176,8 @@ class NaiveExperienceMaker(ABC):
         self.prm_step_separator = '\n'
         self.prm_step_separator_token = self.tokenizer.encode(
             self.prm_step_separator, 
-            return_tensors='pt'
+            return_tensors='pt',
+            add_special_tokens=False,
         ).squeeze(0).to(device=torch.cuda.current_device())
 
     # tokenizer
@@ -502,7 +503,7 @@ class NaiveExperienceMaker(ABC):
         )
 
     @torch.no_grad()
-    def process_experiences(self, experiences: List[Experience]) -> Tuple[List[Experience], List[torch.Tensor]]:
+    def process_experiences_backup(self, experiences: List[Experience]) -> Tuple[List[Experience], List[torch.Tensor]]:
         """
         Process experiences, this can be used to filter out some experiences or do some processing on the rewards.
 
@@ -601,6 +602,137 @@ class NaiveExperienceMaker(ABC):
             
             process_rewards.append(process_reward)
         return experiences, process_rewards
+    
+    @torch.no_grad()
+    def process_experiences(self, experiences: List[Experience]) -> Tuple[List[Experience], List[torch.Tensor]]:
+        """
+        Process experiences, this can be used to filter out some experiences or do some processing on the rewards.
+
+        Output:
+        - experiences: List of Experience
+        - rewards: List of rewards
+        """
+        args = self.strategy.args
+        assert args.advantage_estimator == "rloo"
+
+        # data concatenation across experiences
+        output_process_rewards = []
+        process_rewards = []
+        original_lengths = []
+        have_answers = []
+        solveds = []
+        reward_masks = []
+        num_steps = []
+        response_lengths = []
+        num_tokens_per_steps = []
+        score_masks = []
+        action_masks = []
+        for experience in experiences:
+            process_reward = experience.info["process_reward"].clone()
+            original_length = process_reward.size(1)
+            have_answer = experience.info["have_answers"]
+            solved = experience.info["solved"]
+            reward_mask = experience.info["process_reward_mask"]
+            num_step = experience.info["num_steps"]
+            response_length = experience.info["response_length"]
+            num_tokens_per_step = experience.info["num_tokens_per_step"]
+            score_mask = experience.info["score_mask"]
+            action_mask = experience.action_mask
+
+            original_lengths.append(original_length)
+            process_rewards.append(process_reward)
+            have_answers.append(have_answer)
+            solveds.append(solved)
+            reward_masks.append(reward_mask)
+            num_steps.append(num_step)
+            response_lengths.append(response_length)
+            num_tokens_per_steps.append(num_tokens_per_step)
+            score_masks.append(score_mask)
+            action_masks.append(action_mask)
+        process_rewards = right_padding(process_rewards, 0)
+        have_answers = torch.cat(have_answers)
+        solveds = torch.cat(solveds)
+        reward_masks = right_padding(reward_masks, False)
+        num_steps = torch.cat(num_steps)
+        response_lengths = torch.cat(response_lengths)
+        num_tokens_per_steps = right_padding(num_tokens_per_steps, 0)
+        score_masks = right_padding(score_masks, False)
+        action_masks = right_padding(action_masks, False)
+        num_data = solveds.numel()
+
+        # calculate: PR - PR_baseline + coef * (VR - VR_baseline)
+        process_rewards = process_rewards.reshape(
+            -1, args.n_samples_per_prompt, process_rewards.size(1),
+        )
+        outcome_rewards = process_rewards.sum(-1)
+
+        # check if outcome reward mathces the ground truth
+        outcome_rewards_info = outcome_rewards.flatten()
+        # outcome_reward > 0 means prediction is correct
+        # outcome_reward <= 0 means prediction is wrong
+        prediction = outcome_rewards_info.clone().sign()
+        prediction[prediction == -1] = 0
+
+        match = torch.full_like(solveds, -1.0, dtype=torch.float)
+        match[have_answers] = (
+            prediction[have_answers] == solveds[have_answers]
+        ).float()
+
+        # average reward per step as baseline
+        if args.reward_baseline == "step":
+            num_steps = num_steps.reshape(-1, args.n_samples_per_prompt)
+            reward_masks = reward_masks.reshape(
+                -1, args.n_samples_per_prompt, reward_masks.size(1),
+            )
+
+            average_process_reward = outcome_rewards / num_steps
+            process_reward_baseline = (
+                average_process_reward.sum(-1, keepdim=True) - average_process_reward
+            ) / (args.n_samples_per_prompt - 1)
+
+            process_rewards = (
+                process_rewards - process_reward_baseline.unsqueeze(-1)
+            ).masked_fill(~reward_masks, 0)
+            process_rewards = process_rewards.reshape(num_data, -1)
+        # (avg. reward per token) * (num of tokens of corresponding step) as baseline
+        else:
+            response_lengths = response_lengths.reshape(-1, args.n_samples_per_prompt)
+            average_reward_per_token = (
+                outcome_rewards.sum(-1, keepdim=True) - outcome_rewards
+            ) / (
+                response_lengths.sum(-1, keepdim=True) - response_lengths
+            )
+            
+            process_rewards = process_rewards.reshape(num_data, -1)
+            average_reward_per_token = average_reward_per_token.flatten()
+            
+            for i in range(num_data):
+                process_rewards[i, reward_masks[i]] -= average_reward_per_token[i] * \
+                    num_tokens_per_steps[i, score_masks[i]]
+
+        if "VR" in args.reward_mode:
+            # verifier reward
+            verifier_reward = solveds - 1  # in {-1, 0}
+            verifier_reward = verifier_reward.reshape(-1, args.n_samples_per_prompt)
+            verifier_reward_baseline = (
+                verifier_reward.sum(-1, keepdim=True) - verifier_reward
+            ) / (args.n_samples_per_prompt - 1)
+            verifier_reward = verifier_reward - verifier_reward_baseline
+            verifier_reward = verifier_reward.flatten()
+
+            # add verifier reward to the last step
+            eos_indices = action_masks.size(1) - 1 - action_masks.long().fliplr().argmax(1)
+            process_rewards[torch.arange(num_data), eos_indices] += verifier_reward * args.verifiable_reward_coef
+        
+        for idx, experience in enumerate(experiences):
+            start_idx = idx * args.micro_rollout_batch_size
+            end_idx = (idx + 1) * args.micro_rollout_batch_size
+            
+            output_process_rewards.append(process_rewards[start_idx:end_idx, :original_lengths[idx]])
+            experience.info["match"] = match[start_idx:end_idx]
+            experience.info["reward"] = outcome_rewards_info[start_idx:end_idx]
+
+        return experiences, output_process_rewards
 
 
 class RemoteExperienceMaker(NaiveExperienceMaker):
@@ -636,7 +768,7 @@ class RemoteExperienceMaker(NaiveExperienceMaker):
         in which actor will be used to generate samples.
         """
         if self.vllm_engines is None:
-            return super().generate_samples(all_prompts, **generate_kwargs)
+            return super().generate_samples(all_data, **generate_kwargs)
 
         return self._generate_vllm(all_data, **generate_kwargs)
 
