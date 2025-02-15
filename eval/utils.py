@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any, Iterable, Union
 
 import numpy as np
+
 from examples import get_examples
 
 
@@ -145,6 +146,11 @@ PROMPT_TEMPLATES = {
     ),
     "qwen25-math-cot-ft": (
         '{input}\n\nPlease reason step by step with steps separated by "\n\n", and put your final answer within \\boxed{{}}.',
+        "{output}",
+        "\n\n",
+    ),
+    "deepseek-distill-cot-ft": (
+        '{input}\n\nPlease reason step by step with steps separated by "\n\n", and put your final answer within \\boxed{{}}. <think>\n',
         "{output}",
         "\n\n",
     ),
