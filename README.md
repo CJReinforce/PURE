@@ -2,7 +2,7 @@
 
 # PURE: PRM is still Effective and Compute-Efficient for LLM Math Reasoning
 
-[![Github](https://img.shields.io/badge/PURE-000000?style=for-the-badge&logo=github&logoColor=000&logoColor=white)](https://github.com/CJReinforce/PURE)  [![Wandb](https://img.shields.io/badge/Wandb_Log-fcd022?style=for-the-badge&logo=weightsandbiases&logoColor=000)](https://api.wandb.ai/links/cjreinforce/xvwk7pe9)  [![Hugging Face Collection](https://img.shields.io/badge/PURE_Collection-fcd022?style=for-the-badge&logo=huggingface&logoColor=000)](https://huggingface.co/collections/jinachris/pure-67a85510dc24acd26bb8109f)
+[![Github](https://img.shields.io/badge/PURE-000000?style=for-the-badge&logo=github&logoColor=000&logoColor=white)](https://github.com/CJReinforce/PURE)  [![Wandb](https://img.shields.io/badge/Wandb_Log-fcd022?style=for-the-badge&logo=weightsandbiases&logoColor=000)](https://wandb.ai/cjreinforce/openrlhf_train_ppo/workspace?nw=nwuserchrisjina)  [![Wandb](https://img.shields.io/badge/Wandb_Report-fcd022?style=for-the-badge&logo=weightsandbiases&logoColor=000)](https://api.wandb.ai/links/cjreinforce/xvwk7pe9)  [![Hugging Face Collection](https://img.shields.io/badge/PURE_Collection-fcd022?style=for-the-badge&logo=huggingface&logoColor=000)](https://huggingface.co/collections/jinachris/pure-67a85510dc24acd26bb8109f)
 
 </div>
 
@@ -10,7 +10,7 @@
 
 ## 🎉 News:
 
-- [2025/02/09] We release the training, evaluation code, [wandb log](https://api.wandb.ai/links/cjreinforce/xvwk7pe9), and [checkpoints](https://huggingface.co/collections/jinachris/pure-67a85510dc24acd26bb8109f). Paper's on it's way!
+- [2025/02/09] We release the training, evaluation code, [wandb logs](https://wandb.ai/cjreinforce/openrlhf_train_ppo/workspace?nw=nwuserchrisjina), and [checkpoints](https://huggingface.co/collections/jinachris/pure-67a85510dc24acd26bb8109f). Paper's on it's way!
 
 ## 📖 Introduction
 
@@ -110,7 +110,7 @@ We used [Qwen Math's codebase](https://github.com/QwenLM/Qwen2.5-Math/tree/main/
 
 ### Reward Hacking
 
-Reward hacking often occurs when relying solely on process rewards from the PRM, typically marked by sudden, extreme changes in metrics like reward, KL divergence, and loss. Meanwhile, the model starts only generating irrelevant outputs like "thanks" or "happy birthday" without any other string related to the questions. Since PRM is trained and inferences causally, such outputs can yield positive process scores, even though they are meaningless for math reasoning. You can see examples of this in the [wandb log](https://api.wandb.ai/links/cjreinforce/xvwk7pe9) with run name starting with "PRM_". 
+Reward hacking often occurs when relying solely on process rewards from the PRM, typically marked by sudden, extreme changes in metrics like reward, KL divergence, and loss. Meanwhile, the model starts only generating irrelevant outputs like "thanks" or "happy birthday" without any other string related to the questions. Since PRM is trained and inferences causally, such outputs can yield positive process scores, even though they are meaningless for math reasoning. You can see examples of this in the [wandb log](https://wandb.ai/cjreinforce/openrlhf_train_ppo/workspace?nw=nwuserchrisjina) with run name starting with "PRM_". 
 
 In our experiments, reward hacking usually happened within the first 200 steps. However, before this occurs, the model performs well. For example, the Qwen2.5-7B-PURE-PRM model shown in the table above is saved at step 100, before hacking began.
 
