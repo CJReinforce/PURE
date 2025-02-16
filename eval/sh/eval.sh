@@ -1,6 +1,7 @@
 set -ex
 
-# export CUDA_VISIBLE_DEVICES=0
+# single GPU for evaluation
+export CUDA_VISIBLE_DEVICES=0
 MODEL_NAME_OR_PATH=<local path to the model>
 
 if [[ "${MODEL_NAME_OR_PATH,,}" =~ "deepseek" ]]; then
