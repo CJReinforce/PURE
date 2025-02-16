@@ -1,4 +1,5 @@
 wandb/
+output/
 train_ppo_reft_prm_debug_1_gpu.sh
 train_ppo_reft_prm.sh
 train_pure_ray_debug.sh

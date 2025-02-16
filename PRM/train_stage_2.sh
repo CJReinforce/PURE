@@ -1,4 +1,18 @@
-torchrun finetune.py \
+GPUS_PER_NODE=8
+NNODES=1
+NODE_RANK=0
+MASTER_ADDR=localhost
+MASTER_PORT=46001
+
+DISTRIBUTED_ARGS="
+    --nproc_per_node $GPUS_PER_NODE \
+    --nnodes $NNODES \
+    --node_rank $NODE_RANK \
+    --master_addr $MASTER_ADDR \
+    --master_port $MASTER_PORT
+"
+
+torchrun $DISTRIBUTED_ARGS finetune.py \
     --model_name_or_path <path to ckpt of stage-1> \
     --train_data_path "HuggingFaceH4/prm800k-trl-dedup" \
     --fix_llm False \

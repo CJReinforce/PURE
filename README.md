@@ -25,7 +25,7 @@ To answer these questions, we present **PURE** (**P**rocess-s**U**pervised **R**
 |                            | AIME 2024 | MATH 500 | AMC      | Minerva Math | OlympiadBench | Avg.     |
 | -------------------------- | --------- | -------- | -------- | ------------ | ------------- | -------- |
 | Qwen2.5-Math-7B-Base       | 16.7      | 52.4     | 52.5     | 12.9         | 16.4          | 30.2     |
-| Qwen-2.5-Math-7B-Instruct  | 13.3      | 79.8     | 50.6     | 34.6         | 40.7          | 43.8     |
+| Qwen-2.5-Math-7B-Instruct  | 16.7      | 83.2     | 52.5     | 37.5         | 41.3          | 46.2     |
 | rStar-Math-7B              | 26.7      | 78.4     | 47.5     | -            | **47.1**      | -        |
 | Eurus-2-7B-PRIME           | 26.7      | 79.2     | 57.8     | **38.6**     | 42.1          | 48.9     |
 | Qwen2.5-7B-SimpleRL-Zero   | **33.3**  | 77.2     | 62.5     | 33.5         | 37.6          | 48.8     |
