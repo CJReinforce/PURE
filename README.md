@@ -26,7 +26,6 @@ To answer these questions, we present **PURE** (**P**rocess-s**U**pervised **R**
 | -------------------------- | --------- | -------- | -------- | ------------ | ------------- | -------- |
 | Qwen2.5-Math-7B-Base       | 13.3      | 71.8     | 47.5     | 29.8         | 35.1          | 39.5     |
 | Qwen-2.5-Math-7B-Instruct  | 16.7      | 83.2     | 52.5     | 37.5         | 41.3          | 46.2     |
-| rStar-Math-7B              | 26.7      | 78.4     | 47.5     | -            | **47.1**      | -        |
 | Eurus-2-7B-PRIME           | 26.7      | 79.2     | 57.8     | **38.6**     | 42.1          | 48.9     |
 | Qwen2.5-7B-SimpleRL-Zero   | **33.3**  | 77.2     | 62.5     | 33.5         | 37.6          | 48.8     |
 | Qwen2.5-7B-PURE-PRM+VR*    | 20.0      | **82.6** | **82.5** | 37.1         | 44.1          | **53.3** |
@@ -35,19 +34,19 @@ To answer these questions, we present **PURE** (**P**rocess-s**U**pervised **R**
 
 *The SOTA model was trained using 8K MATH problems, of which only ~800 gave ground-truth final answers that could be used to calculate VRs.
 
-> Note: [rStar-Math-7B](https://arxiv.org/abs/2501.04519), [Eurus-2-7B-PRIME](https://github.com/PRIME-RL/PRIME), and [SimpleRL-Zero](https://github.com/hkust-nlp/simpleRL-reason) are also based on Qwen-2.5-Math-7B.
+> Note: [Eurus-2-7B-PRIME](https://github.com/PRIME-RL/PRIME), and [SimpleRL-Zero](https://github.com/hkust-nlp/simpleRL-reason) are also based on Qwen-2.5-Math-7B.
 
 ***Data and GPUs comparison of different approaches***
 
 
-|                | Qwen2.5-Math-7B-Instruct        | rStar-Math-7B                  | Eurus-2-7B-PRIME         | Qwen2.5-7B-SimpleRL-Zero | Qwen2.5-7B-PURE         |
-| -------------- | ------------------------------- | ------------------------------ | ------------------------ | ------------------------ | ----------------------- |
-| **Base Model** | Qwen2.5-Math-7B                 | Qwen2.5-Math-7B                | Qwen2.5-Math-7B          | Qwen2.5-Math-7B          | Qwen2.5-Math-7B         |
-| **SFT Data**   | 2.5M (open-source and in-house) | ~7.3M (MATH, NuminaMath, etc.) | 230K                     | 0                        | 0                       |
-| **RM Data**    | 618K (in-house)                 | ~7k (in-house)                 | 0                        | 0                        | 369k (open-source)      |
-| **RM**         | Qwen2.5-Math-RM (72B)           | None                           | Eurus-2-7B-SFT           | None                     | [Qwen2.5-Math-7B-PRM800K](https://huggingface.co/jinachris/Qwen2.5-Math-7B-PRM800K) |
-| **RL Data**    | 66K queries × 32 samples        | ~3.647M × 16                   | 150K queries × 4 samples | 8K queries × 8 samples   | 8K queries × 4 samples  |
-| **GPUs**       | -                               | 80 H100 at most                | 8 A100                   | 40 H100                  | 8 A100                  |
+|                | Qwen2.5-Math-7B-Instruct        | Eurus-2-7B-PRIME         | Qwen2.5-7B-SimpleRL-Zero | Qwen2.5-7B-PURE         |
+| -------------- | ------------------------------- | ------------------------ | ------------------------ | ----------------------- |
+| **Base Model** | Qwen2.5-Math-7B                 | Qwen2.5-Math-7B          | Qwen2.5-Math-7B          | Qwen2.5-Math-7B         |
+| **SFT Data**   | 2.5M (open-source and in-house) | 230K                     | 0                        | 0                       |
+| **RM Data**    | 618K (in-house)                 | 0                        | 369k (open-source)      |
+| **RM**         | Qwen2.5-Math-RM (72B)           | Eurus-2-7B-SFT           | None                     | [Qwen2.5-Math-7B-PRM800K](https://huggingface.co/jinachris/Qwen2.5-Math-7B-PRM800K) |
+| **RL Data**    | 66K queries × 32 samples        | 150K queries × 4 samples | 8K queries × 8 samples   | 8K queries × 4 samples  |
+| **GPUs**       | -                               | 8 A100                   | 40 H100                  | 8 A100                  |
 
 ## 🔧 Quick Start
 
