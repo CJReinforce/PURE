@@ -18,7 +18,7 @@ def preprocess_data(data, input_template=None, input_key="input", apply_chat_tem
         'prompt': prompt, 
         'answer': answer, 
         'ref_answer': data.get('ref_answer', 'null'),
-        'level': data["level"],
+        'level': str(data.get('level', 'null')),
         'have_answer': answer != 'null',
     }
 
