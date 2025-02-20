@@ -239,6 +239,7 @@ if __name__ == "__main__":
     parser.add_argument("--verifiable_reward_coef", type=float, default=1.0)
     parser.add_argument("--disable_advantage_normalization", action="store_true", default=False)
     parser.add_argument("--disable_weighted_reward", action="store_true", default=False)
+    parser.add_argument("--nomask-separator-adv", action="store_true", default=False)
 
     #  Models
     parser.add_argument("--pretrain", type=str, default=None, help="HF model name or path")

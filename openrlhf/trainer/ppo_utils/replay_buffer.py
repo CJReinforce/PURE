@@ -158,7 +158,12 @@ class NaiveReplayBuffer(ABC):
     """
 
     def __init__(
-        self, sample_batch_size: int, limit: int = 0, cpu_offload: bool = True, packing_samples: bool = False
+        self, 
+        sample_batch_size: int, 
+        limit: int = 0, 
+        cpu_offload: bool = True, 
+        packing_samples: bool = False,
+        mask_separator_adv: bool = True,
     ) -> None:
         super().__init__()
         self.sample_batch_size = sample_batch_size
@@ -166,6 +171,7 @@ class NaiveReplayBuffer(ABC):
         self.limit = limit
         self.cpu_offload = cpu_offload
         self.packing_samples = packing_samples
+        self.mask_separator_adv = mask_separator_adv
         self.target_device = torch.device(f"cuda:{torch.cuda.current_device()}")
         self.items: List[BufferItem] = []
 
@@ -223,8 +229,10 @@ class NaiveReplayBuffer(ABC):
             num_actions = items_vector.numel()
         else:
             action_masks_vector = torch.cat(action_masks).flatten()
-            step_separator_mask_vector = torch.cat(step_separator_mask).flatten()
-            num_actions = action_masks_vector.sum() - step_separator_mask_vector.sum()
+            num_actions = action_masks_vector.sum()
+            if self.mask_separator_adv:
+                step_separator_mask_vector = torch.cat(step_separator_mask).flatten()
+                num_actions -= step_separator_mask_vector.sum()
 
         # for DP
         # mean
@@ -237,9 +245,10 @@ class NaiveReplayBuffer(ABC):
         rstd = (all_std / all_count).clamp(min=1e-8).rsqrt()
 
         for i, item in enumerate(self):
+            target = (items[i] - mean) * rstd
             setattr(
                 item, attribute, 
-                ((items[i] - mean) * rstd).masked_fill(
+                target.masked_fill(
                     step_separator_mask[i], 0
-                )
+                ) if self.mask_separator_adv else target
             )

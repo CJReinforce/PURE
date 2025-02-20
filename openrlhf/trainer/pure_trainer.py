@@ -113,7 +113,8 @@ class PURETrainer(ABC):
         )
         packing_samples = getattr(self.args, "packing_samples", False)
         self.replay_buffer = NaiveReplayBuffer(
-            micro_train_batch_size, buffer_limit, buffer_cpu_offload, packing_samples
+            micro_train_batch_size, buffer_limit, buffer_cpu_offload, packing_samples,
+            mask_separator_adv=not self.args.nomask_separator_adv
         )
 
         # save codes and scripts

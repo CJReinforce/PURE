@@ -243,8 +243,9 @@ class NaiveExperienceMaker(ABC):
                 # )
             elif self.advantage_estimator in ["reinforce", "rloo"]:
                 returns = reward.fliplr().cumsum(dim=1).fliplr()
-                # 0 adv (no loss) for step separator tokens
-                returns.masked_fill_(experience.info["process_reward_mask"], 0)
+                if not self.strategy.args.nomask_separator_adv:
+                    # 0 adv (no loss) for step separator tokens
+                    returns.masked_fill_(experience.info["process_reward_mask"], 0)
                 experience.returns = returns
                 experience.advantages = deepcopy(experience.returns)
             else:
