@@ -1,8 +1,8 @@
 <div align="center">
 
-# PURE: PRM is still Effective and Compute-Efficient for LLM Math Reasoning
+# Stop Gamma Decay: Min-Form Credit Assignment Is All Process Reward Model Needs for Reasoning
 
-[![Github](https://img.shields.io/badge/PURE-000000?style=for-the-badge&logo=github&logoColor=000&logoColor=white)](https://github.com/CJReinforce/PURE)  [![Wandb](https://img.shields.io/badge/Wandb_Log-fcd022?style=for-the-badge&logo=weightsandbiases&logoColor=000)](https://wandb.ai/cjreinforce/openrlhf_train_ppo/workspace?nw=nwuserchrisjina)  [![Wandb](https://img.shields.io/badge/Wandb_Report-fcd022?style=for-the-badge&logo=weightsandbiases&logoColor=000)](https://api.wandb.ai/links/cjreinforce/xvwk7pe9)  [![Hugging Face Collection](https://img.shields.io/badge/PURE_Collection-fcd022?style=for-the-badge&logo=huggingface&logoColor=000)](https://huggingface.co/collections/jinachris/pure-67a85510dc24acd26bb8109f)
+[![Notion](https://img.shields.io/badge/Notion-%23000000.svg?style=for-the-badge&logo=notion&logoColor=white)](https://tungsten-ink-510.notion.site/Stop-Gamma-Decay-Min-Form-Credit-Assignment-Is-All-Process-Reward-Model-Needs-for-Reasoning-19fcb6ed0184804eb07fd310b38af155?pvs=4)  [![Github](https://img.shields.io/badge/PURE-000000?style=for-the-badge&logo=github&logoColor=000&logoColor=white)](https://github.com/CJReinforce/PURE)  [![Wandb](https://img.shields.io/badge/Wandb_Report-fcd022?style=for-the-badge&logo=weightsandbiases&logoColor=000)](https://api.wandb.ai/links/cjreinforce/xvwk7pe9)  [![Wandb](https://img.shields.io/badge/Wandb_Log-fcd022?style=for-the-badge&logo=weightsandbiases&logoColor=000)](https://wandb.ai/cjreinforce/openrlhf_train_ppo/workspace?nw=nwuserchrisjina)  [![Hugging Face Collection](https://img.shields.io/badge/PURE_Collection-fcd022?style=for-the-badge&logo=huggingface&logoColor=000)](https://huggingface.co/collections/jinachris/pure-67a85510dc24acd26bb8109f)
 
 </div>
 
@@ -10,6 +10,7 @@
 
 ## 🎉 News:
 
+- [2025/02/22] 🔥🔥We release the [notion blog](https://tungsten-ink-510.notion.site/Stop-Gamma-Decay-Min-Form-Credit-Assignment-Is-All-Process-Reward-Model-Needs-for-Reasoning-19fcb6ed0184804eb07fd310b38af155?pvs=4), which details our algorithm, the difference between gamma-decay and min-form credit assignment, examples of reward hacking, and so on🔥🔥
 - [2025/02/09] We release the training, evaluation code, [wandb logs](https://wandb.ai/cjreinforce/openrlhf_train_ppo/workspace?nw=nwuserchrisjina), and [checkpoints](https://huggingface.co/collections/jinachris/pure-67a85510dc24acd26bb8109f). Paper's on it's way!
 
 ## 📖 Introduction
@@ -35,18 +36,6 @@ To answer these questions, we present **PURE** (**P**rocess-s**U**pervised **R**
 *The SOTA model was trained using 8K MATH problems, of which only ~800 gave ground-truth final answers that could be used to calculate VRs.
 
 > Note: [Eurus-2-7B-PRIME](https://github.com/PRIME-RL/PRIME), and [SimpleRL-Zero](https://github.com/hkust-nlp/simpleRL-reason) are also based on Qwen-2.5-Math-7B.
-
-***Data and GPUs comparison of different approaches***
-
-
-|                | Qwen2.5-Math-7B-Instruct        | Eurus-2-7B-PRIME         | Qwen2.5-7B-SimpleRL-Zero | Qwen2.5-7B-PURE         |
-| -------------- | ------------------------------- | ------------------------ | ------------------------ | ----------------------- |
-| **Base Model** | Qwen2.5-Math-7B                 | Qwen2.5-Math-7B          | Qwen2.5-Math-7B          | Qwen2.5-Math-7B         |
-| **SFT Data**   | 2.5M (open-source and in-house) | 230K                     | 0                        | 0                       |
-| **RM Data**    | 618K (in-house)                 | 0                        | 369k (open-source)      |
-| **RM**         | Qwen2.5-Math-RM (72B)           | Eurus-2-7B-SFT           | None                     | [Qwen2.5-Math-7B-PRM800K](https://huggingface.co/jinachris/Qwen2.5-Math-7B-PRM800K) |
-| **RL Data**    | 66K queries × 32 samples        | 150K queries × 4 samples | 8K queries × 8 samples   | 8K queries × 4 samples  |
-| **GPUs**       | -                               | 8 A100                   | 40 H100                  | 8 A100                  |
 
 ## 🔧 Quick Start
 
@@ -75,17 +64,12 @@ We evaluate our PRM using BoN method, [ProcessBench](https://arxiv.org/abs/2412.
 | Deepseek-7B | Pass@1 | 83.9 | 42.4 |
 | Deepseek-7B | Majority Voting@1024 | 89.7 | 57.4  |
 | Deepseek-7B | Deepseek-PRM@1024 | **93.0** | 58.1 |
-| Deepseek-7B | Mistral-PRM@1024 (OOD) | 91.9 | 56.9 |
-| Deepseek-7B | Our-PRM@1024 (OOD) | 91.6 | **62.6** |
+| Deepseek-7B | Our-PRM@1024 | 91.6 | **62.6** |
 
 - On ProcessBench, which tests the PRM's ability to identify the first process error, our PRM scores an average F1 of 57.5, outperforming the best PRM's F1 score of 56.5 in ProcessBench. 
 
 | Process Reward Model    | GSM8K    | MATH     | OlympiadBench | OmniMATH | Average  |
 | ----------------------- | -------- | -------- | ------------- | -------- | -------- |
-| Math-Shepherd-PRM-7B    | 47.9     | 29.5     | 24.8          | 23.8     | 31.5     |
-| RLHFlow-PRM-Mistral-8B  | 50.4     | 33.4     | 13.8          | 15.8     | 28.4     |
-| RLHFlow-PRM-Deepseek-8B | 38.8     | 33.8     | 16.9          | 16.9     | 26.6     |
-| Skywork-PRM-7B          | **70.8** | 53.6     | 22.9          | 21.0     | 42.1     |
 | Qwen2.5-Math-7B-PRM800K | 68.2     | 62.6     | **50.7**      | 44.3     | 56.5     |
 | Our PRM-7B              | 69.0     | **66.5** | 48.4          | **45.9** | **57.5** |
 
@@ -130,11 +114,11 @@ If you find our code useful, we would appreciate it if you could cite our work:
 
 ```bibtex
 @misc{cheng2025pure,
-  title={PURE: PRM is still Effective and Compute-Efficient for LLM Math Reasoning},
-  author={Jie Cheng, Lijun Li, Gang Xiong, Jing Shao, Yisheng Lv},
-  publisher={GitHub},
-  journal={GitHub repository},
-  howpublished={\url{https://github.com/CJReinforce/PURE}},
+  title={Stop Gamma Decay: Min-Form Credit Assignment Is All Process Reward Model Needs for Reasoning},
+  author={Jie Cheng and Lijun Li and Gang Xiong and Jing Shao and Yisheng Lv},
+  year={2025},
+  howpublished={\url{https://tungsten-ink-510.notion.site/PURE-PRM-is-still-Effective-and-Compute-Efficient-for-LLM-Math-Reasoning-19fcb6ed0184804eb07fd310b38af155?pvs=4}},
+  note={Notion Blog}
   year={2025}
 }
 ```
