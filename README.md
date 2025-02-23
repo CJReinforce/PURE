@@ -17,7 +17,7 @@
 
 This month, we saw a huge boost in LLM reasoning power from the verifiable reward (VR)-based Reinforcement learning fine-tuning (ReFT), like [DeepSeek R1](https://github.com/deepseek-ai/DeepSeek-R1), [SimpleRL-Zero](https://github.com/hkust-nlp/simpleRL-reason), and [TinyZero](https://github.com/Jiayi-Pan/TinyZero). Previous work has encountered challenges and made unsuccessful attempts in exploring PRM, so we wonder: How far can PRM actually take us? How does it stack up against VR-based methods in reasoning performance, training costs?
 
-To answer these questions, we present **PURE** (**P**rocess-s**U**pervised **R**einforcement l**E**arning). Using Qwen2.5-Math-7B as the base model, we train a PRM on 369k data from the PRM800K dataset, and then fine-tune another Qwen2.5-Math-7B model using only 8K MATH prompts, process rewards from the PRM, and optional verifiable rewards. For the RL algorithm, we use the PPO loss with an RLOO advantage estimator. We improve credit assignment by using a weighted sum of the process rewards, $\sum_t \text{softmax}(-\text{PR}_t/T)\cdot\text{PR}_t$ which approximates ${\min}_t \text{PR}_t$ when $T\rightarrow 0$, instead of the usual gamma decay sum $\sum_t \gamma^t \cdot \text{PR}_t$ to calculate return. Our framework supports multiple reward types: process reward (PURE-PRM), verifiable reward (PURE-VR), or a mix of both (PURE-PRM+VR), as shown in the following table.
+To answer these questions, we present **PURE** (**P**rocess-s**U**pervised **R**einforcement l**E**arning). Using Qwen2.5-Math-7B as the base model, we train a PRM on 369k data from the PRM800K dataset, and then fine-tune another Qwen2.5-Math-7B model using only 8K MATH prompts, process rewards from the PRM, and optional verifiable rewards. For the RL algorithm, we use the PPO loss with an RLOO advantage estimator. We improve credit assignment by using a weighted sum of the process rewards, $\sum_t \text{softmax}(-\text{PR}_t/T)\cdot\text{PR}_t$ which approximates ${\min}_t \text{PR}_t$ when $T\rightarrow 0$, instead of the usual gamma decay sum $\sum_t \gamma^t \cdot \text{PR}_t$ to calculate return. **Our framework supports multiple reward types: only process reward (PURE-PRM), only verifiable reward (PURE-VR) which is the Deepseek-R1-zero's setting, or a mix of both (PURE-PRM+VR)**, as shown in the following table.
 
 📊 The final model achieves pass@1 accuracy of 82.6% on MATH500, 82.5% on AMC, and 53.3% on average across 5 benchmarks, beating Qwen2.5-math-7B-instruct, PRIME, and SimpleRL with just either <1/50th RL data or 1/5th of the compute resources. 
 
@@ -29,9 +29,9 @@ To answer these questions, we present **PURE** (**P**rocess-s**U**pervised **R**
 | Qwen-2.5-Math-7B-Instruct  | 16.7      | 83.2     | 52.5     | 37.5         | 41.3          | 46.2     |
 | Eurus-2-7B-PRIME           | 26.7      | 79.2     | 57.8     | **38.6**     | 42.1          | 48.9     |
 | Qwen2.5-7B-SimpleRL-Zero   | **33.3**  | 77.2     | 62.5     | 33.5         | 37.6          | 48.8     |
-| Qwen2.5-7B-PURE-PRM+VR*    | 20.0      | **82.6** | **82.5** | 37.1         | 44.1          | **53.3** |
-| Qwen2.5-7B-PURE-PRM        | 16.7      | 81.8     | 60.0     | 38.2         | 44.7          | 49.3     |
-| Qwen2.5-7B-PURE-VR         | 23.3      | 79.4     | 60.0     | 36.8         | 41.8          | 48.3     |
+| **Qwen2.5-7B-PURE-PRM+VR***    | 20.0      | **82.6** | **82.5** | 37.1         | 44.1          | **53.3** |
+| **Qwen2.5-7B-PURE-PRM**        | 16.7      | 81.8     | 60.0     | 38.2         | 44.7          | 49.3     |
+| **Qwen2.5-7B-PURE-VR**         | 23.3      | 79.4     | 60.0     | 36.8         | 41.8          | 48.3     |
 
 *The SOTA model was trained using 8K MATH problems, of which only ~800 gave ground-truth final answers that could be used to calculate VRs.
 
@@ -73,7 +73,7 @@ We evaluate our PRM using BoN method, [ProcessBench](https://arxiv.org/abs/2412.
 | Qwen2.5-Math-7B-PRM800K | 68.2     | 62.6     | **50.7**      | 44.3     | 56.5     |
 | Our PRM-7B              | 69.0     | **66.5** | 48.4          | **45.9** | **57.5** |
 
-- On PRMBench, which is designed to assess the fine-grained error detection capabilities of PRMs, our PRM gets an overall score of 65.3, ranking 🥉third among open source PRMs. You can find our PRM named `Pure-PRM-7B`	on the [official leaderboard](https://prmbench.github.io/).
+- On PRMBench, which is designed to assess the fine-grained error detection capabilities of PRMs, our PRM gets an overall score of **65.3**, ranking 🥉third among open source PRMs. You can find our PRM named `Pure-PRM-7B`	on the [official leaderboard](https://prmbench.github.io/).
 
 These results confirm that our PRM is SOTA and suitable for fine-tuning LLMs.
 
@@ -117,7 +117,7 @@ If you find our code useful, we would appreciate it if you could cite our work:
   title={Stop Gamma Decay: Min-Form Credit Assignment Is All Process Reward Model Needs for Reasoning},
   author={Jie Cheng and Lijun Li and Gang Xiong and Jing Shao and Yisheng Lv},
   year={2025},
-  howpublished={\url{https://tungsten-ink-510.notion.site/PURE-PRM-is-still-Effective-and-Compute-Efficient-for-LLM-Math-Reasoning-19fcb6ed0184804eb07fd310b38af155?pvs=4}},
+  howpublished={\url{https://tungsten-ink-510.notion.site/Stop-Gamma-Decay-Min-Form-Credit-Assignment-Is-All-Process-Reward-Model-Needs-for-Reasoning-19fcb6ed0184804eb07fd310b38af155?pvs=4}},
   note={Notion Blog}
   year={2025}
 }
