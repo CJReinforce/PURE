@@ -115,7 +115,7 @@ If you find our code useful, we would appreciate it if you could cite our work:
 ```bibtex
 @misc{cheng2025pure,
   title={Stop Gamma Decay: Min-Form Credit Assignment Is All Process Reward Model Needs for Reasoning},
-  author={Jie Cheng and Lijun Li and Gang Xiong and Jing Shao and Yisheng Lv},
+  author={Jie Cheng and Lijun Li and Gang Xiong and Jing Shao and Yisheng Lv and Fei-Yue Wang},
   year={2025},
   howpublished={\url{https://tungsten-ink-510.notion.site/Stop-Gamma-Decay-Min-Form-Credit-Assignment-Is-All-Process-Reward-Model-Needs-for-Reasoning-19fcb6ed0184804eb07fd310b38af155?pvs=4}},
   note={Notion Blog}
