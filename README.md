@@ -105,8 +105,9 @@ Unfortunately, we did not observe the aha moment, self-reflection, or long CoT f
 
 ## 📝 TODO:
 
+- [ ] re-implementation on [verl](https://github.com/volcengine/verl) (see `verl` [branch](https://github.com/CJReinforce/PURE/tree/verl))
 - [ ] paper with more discussions and evaluations
-- [ ] attempts to mitigate reward hacking for PRM (Online PURE).
+- [ ] attempts to mitigate reward hacking for PRM (Online PURE)
 
 ## 🎈 Citation
 
