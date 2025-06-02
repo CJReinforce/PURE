@@ -16,5 +16,5 @@ ray[data,train,tune,serve]
 tensordict<0.9
 torchdata
 transformers
-vllm<=0.8.5
+vllm<=0.9.0.1
 wandb
