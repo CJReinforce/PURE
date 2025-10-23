@@ -8,7 +8,8 @@
 
 ## 🎉 News
 
-- **[2025/04/22]** 🔥🔥Released our Paper on arXiv. See [here](https://arxiv.org/pdf/2504.15275)🔥🔥
+- **[2025/10/23]** 🔥🔥Our paper is accepted by NeurIPS 2025.🔥🔥
+- **[2025/04/22]** Released our Paper on arXiv. See [here](https://arxiv.org/pdf/2504.15275)
 - **[2025/03/24]** We re-implement our algorithm based on verl. ✨✨ Key features: **(1)** add ~50 additional metrics to comprehensively monitor the training process and stability, **(2)** add [a custom wandb workerspace](https://github.com/CJReinforce/PURE/tree/verl/verl/utils/logger/wandb_ws.py) to monitor ~20 important metrics, **(3)** add curriculum learning.✨✨
 - **[2025/02/22]** We release the [notion blog](https://tungsten-ink-510.notion.site/Stop-Gamma-Decay-Min-Form-Credit-Assignment-Is-All-Process-Reward-Model-Needs-for-Reasoning-19fcb6ed0184804eb07fd310b38af155?pvs=4), which details our algorithm, the difference between gamma-decay and min-form credit assignment, examples of reward hacking, and so on.
 - **[2025/02/09]** We release the training, evaluation code, [wandb](https://api.wandb.ai/links/cjreinforce/xvwk7pe9), and [checkpoints](https://huggingface.co/collections/jinachris/pure-67a85510dc24acd26bb8109f). Paper's on it's way!
@@ -17,7 +18,7 @@
 
 This month, we saw a huge boost in LLM reasoning power from the verifiable reward (VR)-based Reinforcement learning fine-tuning (ReFT). Previous work has encountered challenges and made unsuccessful attempts in exploring PRM, so we wonder: How far can PRM actually take us? How does it stack up against VR-based methods in reasoning performance, training costs?
 
-To answer these questions, we present **PURE** (**P**rocess-s**U**pervised **R**einforcement l**E**arning). Employing Qwen2.5-Math-7B as the base model, we train a PRM using PRM800K dataset, and then fine-tune another Qwen2.5-Math-7B model using only 8K MATH prompts, process rewards from the PRM, and optional verifiable rewards. For the RL algorithm, we use the PPO loss with an RLOO advantage estimator. We improve credit assignment by using a weighted sum of the process rewards, $\sum_t \text{softmax}(-\text{PR}_t/T)\cdot\text{PR}_t$ which approximates ${\min}_t \text{PR}_t$ when $T\rightarrow 0$, instead of the usual gamma decay sum $\sum_t \gamma^t \cdot \text{PR}_t$ to calculate return. **Our framework supports multiple reward types: only process reward (PURE-PRM), only verifiable reward (PURE-VR) which is the Deepseek-R1-zero's setting, or a mix of both (PURE-PRM+VR)**, as shown in the following table.
+To answer these questions, we present **PURE** (**P**rocess-s**U**pervised **R**einforcement l**E**arning). Employing Qwen2.5-Math-7B as the base model, we train a PRM using PRM800K dataset, and then fine-tune another Qwen2.5-Math-7B model using only 8K MATH prompts, process rewards from the PRM, and optional verifiable rewards. **Our framework supports multiple reward types: only process reward (PURE-PRM), only verifiable reward (PURE-VR) which is the Deepseek-R1-zero's setting, or a mix of both (PURE-PRM+VR)**, as shown in the following table.
 
 📊 The final model achieves pass@1 accuracy of 82.6% on MATH500, 82.5% on AMC, and 53.3% on average across 5 benchmarks, beating Qwen2.5-math-7B-instruct, PRIME, and SimpleRL with just either <1/50th RL data or 1/5th of the compute resources. 
 
